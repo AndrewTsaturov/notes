@@ -17,22 +17,33 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  * Created by Андрей on 22.05.2017.
  */
 
 public class FragmentEditor extends Fragment {
     boolean mDualPane;
+
     int checkNote = Integer.MIN_VALUE;
+
     String header;
     String body;
-    EditText headerEdit;
-    EditText bodyEdit;
+
+    @BindView(R.id.note_edit_header) EditText headerEdit;
+    @BindView(R.id.note_edit_body) EditText bodyEdit;
+
+    Unbinder unbinder;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         View listOfNotes = getActivity().findViewById(R.id.ui);
+
         mDualPane = listOfNotes != null && listOfNotes.getVisibility() == View.VISIBLE;
     }
 
@@ -40,19 +51,29 @@ public class FragmentEditor extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View ui = inflater.inflate(R.layout.fragment_editor, container, false);
-        headerEdit = (EditText) ui.findViewById(R.id.note_edit_header);
-        bodyEdit = (EditText) ui.findViewById(R.id.note_edit_body);
+
+        unbinder = ButterKnife.bind(this, ui);
+
         checkNote = getNoteIndex();
         if (checkNote != Integer.MIN_VALUE){
             headerEdit.setText(AppNote.listNotes.get(checkNote).getHeader());
             bodyEdit.setText(AppNote.listNotes.get(checkNote).getBody());
         }
+
         return ui;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        unbinder.unbind();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setHasOptionsMenu(true);
     }
 
@@ -86,16 +107,8 @@ public class FragmentEditor extends Fragment {
         AlertDialog.Builder cancel = new AlertDialog.Builder(getContext());
         cancel.setTitle(null);
         cancel.setMessage(R.string.dialog_cancel_message);
-        cancel.setNegativeButton(R.string.dialog_cancel_neg, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                stopEditor();
-            }
-        });
-        cancel.setPositiveButton(R.string.dialog_cancel_pos, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
+        cancel.setNegativeButton(R.string.dialog_cancel_neg, (dialog, which) -> stopEditor());
+        cancel.setPositiveButton(R.string.dialog_cancel_pos, (dialog, which) -> {
         });
         cancel.show();
     }
@@ -106,18 +119,12 @@ public class FragmentEditor extends Fragment {
         delete.setTitle(null);
         String a = getString(R.string.alrt_delete_dialog) + " \"" + AppNote.listNotes.get(pos).getHeader() +"\"" + " ?";
         delete.setMessage(a);
-        delete.setNegativeButton(R.string.alrt_delete_dialog_neg, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
+        delete.setNegativeButton(R.string.alrt_delete_dialog_neg, (dialog, which) -> {
         });
-        delete.setPositiveButton(R.string.alrt_delete_dialog_pos, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                AppNote ap = ((AppNote) getContext().getApplicationContext());
-                ap.deleteNote(p);
-                stopEditor();
-            }
+        delete.setPositiveButton(R.string.alrt_delete_dialog_pos, (dialog, which) -> {
+            AppNote ap = ((AppNote) getContext().getApplicationContext());
+            ap.deleteNote(p);
+            stopEditor();
         });
         delete.show();
     }
@@ -128,19 +135,13 @@ public class FragmentEditor extends Fragment {
         save.setTitle(null);
         String a = getString(R.string.dialog_save_msg) + "\"" + header +"\"" + " ?";
         save.setMessage(a);
-        save.setNegativeButton(R.string.dialog_save_neg, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        save.setNegativeButton(R.string.dialog_save_neg, (dialog, which) -> {
 
-            }
         });
-        save.setPositiveButton(R.string.dialog_save_pos, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                AppNote ap = ((AppNote) getContext().getApplicationContext());
-                ap.saveData(p, new Note(header, body));
-                stopEditor();
-            }
+        save.setPositiveButton(R.string.dialog_save_pos, (dialog, which) -> {
+            AppNote ap = ((AppNote) getContext().getApplicationContext());
+            ap.saveData(p, new Note(header, body));
+            stopEditor();
         });
         save.show();
     }
@@ -169,4 +170,6 @@ public class FragmentEditor extends Fragment {
     public int getNoteIndex(){
         return getArguments().getInt(Constants.COUNT);
     }
+
+
 }

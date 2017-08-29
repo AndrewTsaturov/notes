@@ -19,13 +19,11 @@
         android:layout_height="1dp"
         android:background="@color/divider" />
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:id="@+id/notes_list"
         android:layout_width="match_parent"
         android:layout_weight="1"
-        android:layout_height="fill_parent">
-
-    </ListView>
+        android:layout_height="wrap_content"/>
 </LinearLayout>
