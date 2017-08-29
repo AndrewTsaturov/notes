@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<android.support.v7.widget.CardView
+    android:layout_margin="4dp"
+    android:elevation="4dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_margin="4dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/note_header"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_gravity="start"
+        android:textColor="@color/primary_text"
+        android:paddingLeft="4dp"
+        android:paddingTop="4dp"
+        android:text="Заголовок"
+        android:textAlignment="textStart"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/secondary_text"/>
+    <TextView
+        android:id="@+id/note_body"
+        android:layout_width="match_parent"
+        android:lines="3"
+        android:textColor="@color/secondary_text"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:paddingLeft="4dp"
+        android:paddingTop="4dp"
+        android:text="fdjflkdflkdlfksd;lkdsfksdf;kszdkd,xzc,mlf,mcx,mcx"
+        android:textAlignment="textStart"
+        android:textSize="14sp"
+        android:textStyle="normal" />
+    </LinearLayout>
+</android.support.v7.widget.CardView>
+</LinearLayout>

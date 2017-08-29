@@ -1,0 +1,29 @@
+<resources>
+    <string name="first_start_header">Привет</string>
+    <string name="first_start_body">Можешь поделиться тут самым сокровенным :)</string>
+    <string name="app_name">Заметки</string>
+    <string name="menu_one_edit">Редактировать</string>
+    <string name="menu_one_delete">Удалить</string>
+    <string name="menu_one_share">Поделиться</string>
+    <string name="menu_one_exit">Сохранить и выйти</string>
+    <string name="alrt_delete_dialog">Вы дествительно хотите удалить заметку</string>
+    <string name="menu_edit_delete">Удалить</string>
+    <string name="menu_edit_save">Сохранить</string>
+    <string name="menu_edit_share">Поделиться</string>
+    <string name="alrt_delete_dialog_pos">Удалить</string>
+    <string name="alrt_delete_dialog_neg">Отмена</string>
+    <string name="btn_save">Завершить</string>
+    <string name="btn_create">Новая Заметка</string>
+    <string name="dialog_delete_message">Вы действительно хотите удалить заметку: </string>
+    <string name="dialog_delete_neg">Нет</string>
+    <string name="dialog_delete_pos">Удалить</string>
+    <string name="dialog_cancel_message">Вы не ввели необходимую информацию. Продолжить?</string>
+    <string name="dialog_cancel_pos">Продолжить</string>
+    <string name="dialog_cancel_neg">Отменить</string>
+    <string name="dialog_save_msg">Вы действительно хотите сохранить измененения в заметке </string>
+    <string name="dialog_save_neg">Отмена</string>
+    <string name="dialog_save_pos">Сохранить</string>
+    <string name="hint_edit_header">Заголовок</string>
+    <string name="hint_edit_body">Ваши мысли</string>
+    <string name="start">Ваши заметки:</string>
+</resources>
