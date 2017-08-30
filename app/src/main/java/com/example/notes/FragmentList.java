@@ -187,7 +187,7 @@ public class FragmentList extends Fragment implements NoteInterface {
     }
 
     @Override
-    public void onNoteLongClick(int position) {
-        itemPopup(ui, position, adapter);
+    public void onNoteLongClick(int position, View view) {
+        itemPopup(view, position, adapter);
     }
 }

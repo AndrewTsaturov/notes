@@ -62,7 +62,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.MyViewHolder
 
             view.setOnClickListener(v -> noteInterface.onNoteClick(getAdapterPosition()));
             view.setOnLongClickListener(v -> {
-                noteInterface.onNoteLongClick(getAdapterPosition());
+                noteInterface.onNoteLongClick(getAdapterPosition(), view);
                 return true;
             });
         }
