@@ -21,8 +21,6 @@ public class AppNote extends Application {
         Log.d("AppNOTE", "AppNote Стартовал");
         if (notesHandler == null) notesHandler = new NotesHandler(this);
         listNotes = notesHandler.loadNotes();
-        if (listNotes.size() == 0) listNotes.add(new Note(getString(R.string.first_start_header),
-                getString(R.string.first_start_body)));
     }
 
     public void saveData(int p, Note note){

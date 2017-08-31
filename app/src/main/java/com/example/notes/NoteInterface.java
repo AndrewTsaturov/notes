@@ -1,5 +1,6 @@
 package com.example.notes;
 
+import android.os.Bundle;
 import android.view.View;
 
 /**
@@ -10,5 +11,4 @@ import android.view.View;
 
     void onNoteClick(int position);
     void onNoteLongClick(int position, View v);
-
 }

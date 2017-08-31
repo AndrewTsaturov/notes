@@ -1,11 +1,9 @@
 package com.example.notes;
 
-import android.content.DialogInterface;
-import android.content.Intent;
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,7 +24,6 @@ import butterknife.Unbinder;
  */
 
 public class FragmentEditor extends Fragment {
-    boolean mDualPane;
 
     int checkNote = Integer.MIN_VALUE;
 
@@ -38,13 +35,20 @@ public class FragmentEditor extends Fragment {
 
     Unbinder unbinder;
 
+    FragmentInterface fragmentInterface;
+
+    public void setCheckNote(int checkNote) {
+        this.checkNote = checkNote;
+    }
+
+    public void setOnItemInterface(StartActivity startActivity){
+        fragmentInterface = startActivity;
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        View listOfNotes = getActivity().findViewById(R.id.ui);
-
-        mDualPane = listOfNotes != null && listOfNotes.getVisibility() == View.VISIBLE;
+        setOnItemInterface((StartActivity) getActivity());
     }
 
     @Nullable
@@ -54,7 +58,6 @@ public class FragmentEditor extends Fragment {
 
         unbinder = ButterKnife.bind(this, ui);
 
-        checkNote = getNoteIndex();
         if (checkNote != Integer.MIN_VALUE){
             headerEdit.setText(AppNote.listNotes.get(checkNote).getHeader());
             bodyEdit.setText(AppNote.listNotes.get(checkNote).getBody());
@@ -85,29 +88,42 @@ public class FragmentEditor extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        header = headerEdit.getText().toString();
+        body = bodyEdit.getText().toString();
+
+        boolean emptyTextFields;
+
         switch (item.getItemId()){
+
             case R.id.menu_edit_save:
-                header = headerEdit.getText().toString();
-                body = bodyEdit.getText().toString();
-                if(header.matches("") || body.matches("")) cacelDialog();
+                emptyTextFields = header.matches("") || body.matches("");
+
+                if(emptyTextFields) cancelDialog();
+
                 else {
                     saveDialog(checkNote, header, body);
                 }
                 break;
+
             case R.id.menu_edit_delete:
-                if (AppNote.listNotes.size() != 0)
+                emptyTextFields = header.matches("") || body.matches("");
+
+                if (AppNote.listNotes.size() != 0 && !emptyTextFields)
                     deleteDialog(checkNote);
-                else cacelDialog();
+                else cancelDialog();
+
                 break;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
-    private void cacelDialog(){
+    private void cancelDialog(){
         AlertDialog.Builder cancel = new AlertDialog.Builder(getContext());
         cancel.setTitle(null);
         cancel.setMessage(R.string.dialog_cancel_message);
-        cancel.setNegativeButton(R.string.dialog_cancel_neg, (dialog, which) -> stopEditor());
+        cancel.setNegativeButton(R.string.dialog_cancel_neg, (dialog, which) -> fragmentInterface.stopEditor());
         cancel.setPositiveButton(R.string.dialog_cancel_pos, (dialog, which) -> {
         });
         cancel.show();
@@ -117,15 +133,21 @@ public class FragmentEditor extends Fragment {
         final int p = pos;
         AlertDialog.Builder delete = new AlertDialog.Builder(getContext());
         delete.setTitle(null);
-        String a = getString(R.string.alrt_delete_dialog) + " \"" + AppNote.listNotes.get(pos).getHeader() +"\"" + " ?";
-        delete.setMessage(a);
+
+        String msg = getString(R.string.alrt_delete_dialog) + " \"" +
+                AppNote.listNotes.get(pos).getHeader() +"\"" + " ?";
+
+        delete.setMessage(msg);
         delete.setNegativeButton(R.string.alrt_delete_dialog_neg, (dialog, which) -> {
         });
         delete.setPositiveButton(R.string.alrt_delete_dialog_pos, (dialog, which) -> {
+
             AppNote ap = ((AppNote) getContext().getApplicationContext());
             ap.deleteNote(p);
-            stopEditor();
+
+            fragmentInterface.stopEditor();
         });
+
         delete.show();
     }
 
@@ -133,43 +155,20 @@ public class FragmentEditor extends Fragment {
         final int p = pos;
         AlertDialog.Builder save = new AlertDialog.Builder(getContext());
         save.setTitle(null);
-        String a = getString(R.string.dialog_save_msg) + "\"" + header +"\"" + " ?";
-        save.setMessage(a);
+
+        String msg = getString(R.string.dialog_save_msg) + "\"" + header +"\"" + " ?";
+
+        save.setMessage(msg);
         save.setNegativeButton(R.string.dialog_save_neg, (dialog, which) -> {
 
         });
         save.setPositiveButton(R.string.dialog_save_pos, (dialog, which) -> {
             AppNote ap = ((AppNote) getContext().getApplicationContext());
             ap.saveData(p, new Note(header, body));
-            stopEditor();
+
+            fragmentInterface.stopEditor();
         });
         save.show();
     }
-    public void stopEditor(){
-        if(mDualPane){
-            FragmentList list = new FragmentList();
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.replace(R.id.ui, list);
-            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            ft.commit();
-        }
-        else {
-            Intent intent = new Intent();
-            intent.setClass(getContext(), StartActivity.class);
-            startActivity(intent);
-        }
-    }
-    public static FragmentEditor newInstance(int index){
-        FragmentEditor f = new FragmentEditor();
-        Bundle args = new Bundle();
-        args.putInt(Constants.COUNT, index);
-        f.setArguments(args);
-
-        return f;
-    }
-    public int getNoteIndex(){
-        return getArguments().getInt(Constants.COUNT);
-    }
-
 
 }

@@ -33,18 +33,24 @@ public class NotesHandler extends SQLiteOpenHelper {
 
     public void saveNote(Note note){
         SQLiteDatabase db = getWritableDatabase();
+
         ContentValues cv = new ContentValues();
+
         String whereClause = SQLiteConsts.KEY_ID + "=" + note.getId();
+
         cv.put(SQLiteConsts.HEADER_ID, note.getHeader());
         cv.put(SQLiteConsts.BODY_ID, note.getBody());
+
         db.update(SQLiteConsts.TABLE_NAME, cv, whereClause, null);
         db.close();
     }
     public void addNote(Note note){
         SQLiteDatabase db = getWritableDatabase();
+
         ContentValues cv = new ContentValues();
         cv.put(SQLiteConsts.HEADER_ID, note.getHeader());
         cv.put(SQLiteConsts.BODY_ID, note.getBody());
+
         db.insert(SQLiteConsts.TABLE_NAME, null, cv);
         db.close();
     }
@@ -56,7 +62,9 @@ public class NotesHandler extends SQLiteOpenHelper {
 
     public ArrayList<Note> loadNotes(){
         ArrayList<Note> notes = new ArrayList<>();
+
         SQLiteDatabase db = getReadableDatabase();
+
         Cursor cursor = db.rawQuery(SQLiteConsts.GET_TABLE_FOR_CURSOR, null);
         while(cursor.moveToNext()){
             Note note = new Note();
@@ -65,6 +73,7 @@ public class NotesHandler extends SQLiteOpenHelper {
             note.setBody(cursor.getString(2));
             notes.add(note);
         }
+
         return notes;
     }
     public void deleteNote(Note note){
