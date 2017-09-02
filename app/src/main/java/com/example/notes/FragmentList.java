@@ -34,6 +34,12 @@ public class FragmentList extends Fragment implements NoteInterface {
 
     FragmentInterface fragmentInterface;
 
+    boolean clearMenu;
+
+    public void setClearMenu(boolean clearMenu) {
+        this.clearMenu = clearMenu;
+    }
+
     public void setOnItemInterface(StartActivity startActivity){
         fragmentInterface = startActivity;
     }
@@ -52,6 +58,7 @@ public class FragmentList extends Fragment implements NoteInterface {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (clearMenu) menu.clear();
         inflater.inflate(R.menu.menu_start, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -113,8 +120,7 @@ public class FragmentList extends Fragment implements NoteInterface {
 
         });
         delete.setPositiveButton(R.string.alrt_delete_dialog_pos, (dialog, which) -> {
-            AppNote ap = ((AppNote) getContext().getApplicationContext());
-            ap.deleteNote(p);
+            fragmentInterface.deleteNote(p);
             adapter.notifyDataSetChanged();
         });
         delete.show();

@@ -36,9 +36,9 @@ public class StartActivity extends AppCompatActivity implements FragmentInterfac
 
     FragmentTransaction ft;
 
-    boolean mDualPane;
+    boolean mDualPane, editorIsWorking;
 
-    boolean editorIsWorking;
+    AppNote ap;
 
 
     @Override
@@ -49,12 +49,15 @@ public class StartActivity extends AppCompatActivity implements FragmentInterfac
         //TODO ==> Here: ButterKnife doesn't work and calls the app crush
         editorUI = (FrameLayout) findViewById(R.id.land_editor);
 
+        ap = ((AppNote) getApplicationContext());
+
         initUI();
     }
 
     private void initUI(){
 
         list = new FragmentList();
+        list.setClearMenu(true);
 
         editor = new FragmentEditor();
 
@@ -91,27 +94,22 @@ public class StartActivity extends AppCompatActivity implements FragmentInterfac
     @Override
     protected void onStop() {
         super.onStop();
-//        ft = manager.beginTransaction();
-//        ft.remove(list);
-//        ft.remove(editor);
-//        ft.commit();
     }
 
     @Override
     public void startEditor(int position) {
         editorIsWorking = true;
 
-        editor = new FragmentEditor();
-
         editor.setCheckNote(position);
 
-        ft = manager.beginTransaction();
-
         if(mDualPane){
-            ft.add(R.id.land_editor, editor);
-            ft.commit();
+            landscapeEditorLaunch(position);
         }
         else {
+            editor = new FragmentEditor();
+            editor.setCheckNote(position);
+
+            ft = manager.beginTransaction();
             ft.replace(R.id.ui, editor);
             ft.commit();
         }
@@ -122,11 +120,53 @@ public class StartActivity extends AppCompatActivity implements FragmentInterfac
 
         editorIsWorking = false;
 
-        list = new FragmentList();
+        if(mDualPane){
+            list.adapter.notifyDataSetChanged();
+        }
+        else {
+            list = new FragmentList();
 
-        ft = manager.beginTransaction();
-        ft.replace(R.id.ui, list);
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        ft.commit();
+            ft = manager.beginTransaction();
+            ft.replace(R.id.ui, list);
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            ft.commit();
+        }
+    }
+
+    @Override
+    public void saveNote(int position, Note note) {
+        ap.saveData(position, note);
+        if (editor.checkNote == Integer.MIN_VALUE && mDualPane){
+            editor.setCheckNote(AppNote.listNotes.size() - 1);
+            list.adapter.notifyDataSetChanged();
+        }
+        else stopEditor();
+    }
+
+    @Override
+    public void deleteNote(int position) {
+        ap.deleteNote(position);
+
+        if(mDualPane){
+            position = position - 1;
+
+            if(position >= 0){
+            editor.setCheckNote(position);
+
+            landscapeEditorLaunch(position);
+            }
+            else landscapeEditorLaunch(Integer.MIN_VALUE);
+        }
+    }
+
+    private void landscapeEditorLaunch(int position){
+        if(position != Integer.MIN_VALUE){
+            editor.headerEdit.setText(AppNote.listNotes.get(position).getHeader());
+            editor.bodyEdit.setText(AppNote.listNotes.get(position).getBody());
+        }
+        else {
+            editor.headerEdit.setText("");
+            editor.bodyEdit.setText("");
+        }
     }
 }

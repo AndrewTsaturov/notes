@@ -30,6 +30,8 @@ public class FragmentEditor extends Fragment {
     String header;
     String body;
 
+    boolean clearMenu;
+
     @BindView(R.id.note_edit_header) EditText headerEdit;
     @BindView(R.id.note_edit_body) EditText bodyEdit;
 
@@ -37,8 +39,13 @@ public class FragmentEditor extends Fragment {
 
     FragmentInterface fragmentInterface;
 
+
     public void setCheckNote(int checkNote) {
         this.checkNote = checkNote;
+    }
+
+    public void setClearMenu(boolean clearMenu) {
+        this.clearMenu = clearMenu;
     }
 
     public void setOnItemInterface(StartActivity startActivity){
@@ -82,6 +89,8 @@ public class FragmentEditor extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if(clearMenu) menu.clear();
+
         inflater.inflate(R.menu.menu_edit, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -141,10 +150,7 @@ public class FragmentEditor extends Fragment {
         delete.setNegativeButton(R.string.alrt_delete_dialog_neg, (dialog, which) -> {
         });
         delete.setPositiveButton(R.string.alrt_delete_dialog_pos, (dialog, which) -> {
-
-            AppNote ap = ((AppNote) getContext().getApplicationContext());
-            ap.deleteNote(p);
-
+            fragmentInterface.deleteNote(p);
             fragmentInterface.stopEditor();
         });
 
@@ -163,10 +169,7 @@ public class FragmentEditor extends Fragment {
 
         });
         save.setPositiveButton(R.string.dialog_save_pos, (dialog, which) -> {
-            AppNote ap = ((AppNote) getContext().getApplicationContext());
-            ap.saveData(p, new Note(header, body));
-
-            fragmentInterface.stopEditor();
+            fragmentInterface.saveNote(p, new Note(header, body));
         });
         save.show();
     }

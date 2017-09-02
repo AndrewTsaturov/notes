@@ -7,4 +7,6 @@ package com.example.notes;
 public interface FragmentInterface {
     void startEditor(int position);
     void stopEditor();
+    void saveNote(int position, Note note);
+    void deleteNote(int position);
 }

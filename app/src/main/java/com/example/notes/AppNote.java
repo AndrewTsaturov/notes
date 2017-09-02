@@ -24,7 +24,7 @@ public class AppNote extends Application {
     }
 
     public void saveData(int p, Note note){
-        if (p != Integer.MIN_VALUE){
+        if (p != Integer.MIN_VALUE && listNotes.size() > 0){
             listNotes.set(p, note);
             Note newNote = new Note(AppNote.listNotes.get(p).getId(), note.header, note.body);
             notesHandler.saveNote(newNote);}
