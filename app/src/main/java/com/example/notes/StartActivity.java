@@ -86,8 +86,10 @@ public class StartActivity extends AppCompatActivity implements FragmentInterfac
     //костыль с финишом
     @Override
     public void onBackPressed() {
-        if(!mDualPane && editorIsWorking)
+        if(!mDualPane && editorIsWorking){
+            list.setClearMenu(true);
             stopEditor();
+        }
         else this.finish();
     }
 
@@ -107,6 +109,7 @@ public class StartActivity extends AppCompatActivity implements FragmentInterfac
         }
         else {
             editor = new FragmentEditor();
+            editor.setClearMenu(true);
             editor.setCheckNote(position);
 
             ft = manager.beginTransaction();
