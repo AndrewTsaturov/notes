@@ -1,8 +1,4 @@
-package com.example.notes;
-
-/**
- * Created by Андрей on 15.04.2017.
- */
+package com.example.notes.utils;
 
 public interface Constants {
     String PREF_NOTE = "list";

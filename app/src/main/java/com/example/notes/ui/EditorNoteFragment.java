@@ -1,11 +1,10 @@
-package com.example.notes;
+package com.example.notes.ui;
 
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,7 +12,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import com.example.notes.AppNote;
+import com.example.notes.ui.inerfaces.FragmentInterface;
+import com.example.notes.data.Note;
+import com.example.notes.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,7 +26,7 @@ import butterknife.Unbinder;
  * Created by Андрей on 22.05.2017.
  */
 
-public class FragmentEditor extends Fragment {
+public class EditorNoteFragment extends Fragment {
 
     int checkNote = Integer.MIN_VALUE;
 
@@ -132,7 +135,7 @@ public class FragmentEditor extends Fragment {
         AlertDialog.Builder cancel = new AlertDialog.Builder(getContext());
         cancel.setTitle(null);
         cancel.setMessage(R.string.dialog_cancel_message);
-        cancel.setNegativeButton(R.string.dialog_cancel_neg, (dialog, which) -> fragmentInterface.stopEditor());
+        cancel.setNegativeButton(R.string.dialog_cancel_neg, (dialog, which) -> fragmentInterface.hideEditorFragment());
         cancel.setPositiveButton(R.string.dialog_cancel_pos, (dialog, which) -> {
         });
         cancel.show();
@@ -151,7 +154,7 @@ public class FragmentEditor extends Fragment {
         });
         delete.setPositiveButton(R.string.alrt_delete_dialog_pos, (dialog, which) -> {
             fragmentInterface.deleteNote(p);
-            fragmentInterface.stopEditor();
+            fragmentInterface.hideEditorFragment();
         });
 
         delete.show();

@@ -1,4 +1,4 @@
-package com.example.notes;
+package com.example.notes.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,37 +13,30 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.notes.AppNote;
+import com.example.notes.R;
+import com.example.notes.ui.inerfaces.FragmentInterface;
+import com.example.notes.ui.inerfaces.NoteInterface;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-/**
- * Created by Андрей on 22.05.2017.
- */
 
-public class FragmentList extends Fragment implements NoteInterface {
-
-    View ui;
+//TODO--> почему fragmentList ???
+public class NoteListFragment extends Fragment implements NoteInterface {
 
     private Unbinder unbinder;
 
-    @BindView(R.id.notes_list)
-    RecyclerView notes;
-
-    NotesAdapter adapter;
-
-    FragmentInterface fragmentInterface;
+    @BindView(R.id.notes_list) RecyclerView notes;
 
     boolean clearMenu;
+    public NotesAdapter adapter;
+    private FragmentInterface fragmentInterface;
 
-    public void setClearMenu(boolean clearMenu) {
-        this.clearMenu = clearMenu;
-    }
 
-    public void setOnItemInterface(StartActivity startActivity){
-        fragmentInterface = startActivity;
-    }
-
+    //TODO--> всё в кучу методы классы Callbacks очень по структуре плохо
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -65,7 +58,7 @@ public class FragmentList extends Fragment implements NoteInterface {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.menu_start_add) fragmentInterface.startEditor(Integer.MIN_VALUE);
+        if(item.getItemId() == R.id.menu_start_add) fragmentInterface.showEditorFragment(Integer.MIN_VALUE);
         return super.onOptionsItemSelected(item);
     }
 
@@ -73,12 +66,12 @@ public class FragmentList extends Fragment implements NoteInterface {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
 
-        ui = inflater.inflate(R.layout.fragment_list, container, false);
-        unbinder = ButterKnife.bind(this, ui);
+        View view = inflater.inflate(R.layout.fragment_list, container, false);
+        unbinder = ButterKnife.bind(this, view);
 
         setupView();
 
-        return ui;
+        return view;
     }
 
     @Override
@@ -87,9 +80,8 @@ public class FragmentList extends Fragment implements NoteInterface {
         unbinder.unbind();
     }
 
-    public void itemPopup(View v, final int position, final NotesAdapter adapter){
-        final int pos = position;
-
+    //--> show popup
+    public void showPopup(View v, final int position, final NotesAdapter adapter){
         PopupMenu popupMenu = new PopupMenu(getContext(), v);
         popupMenu.inflate(R.menu.menu_one);
         popupMenu.setOnMenuItemClickListener(item -> {
@@ -97,10 +89,10 @@ public class FragmentList extends Fragment implements NoteInterface {
             int a = item.getItemId();
             switch (a){
                 case R.id.menu_one_item_delete:
-                    deleteDialog(pos, adapter);
+                    showDeleteDialog(position, adapter);
                     break;
                 case R.id.menu_one_item_edit:
-                    fragmentInterface.startEditor(pos);
+                    fragmentInterface.showEditorFragment(position);
                     break;
             }
             return false;
@@ -109,8 +101,7 @@ public class FragmentList extends Fragment implements NoteInterface {
         popupMenu.show();
     }
 
-    protected void deleteDialog(int pos, final NotesAdapter adapter){
-        final int p = pos;
+    protected void showDeleteDialog(int pos, final NotesAdapter adapter){
 
         AlertDialog.Builder delete = new AlertDialog.Builder(getContext());
         delete.setTitle(null);
@@ -120,7 +111,7 @@ public class FragmentList extends Fragment implements NoteInterface {
 
         });
         delete.setPositiveButton(R.string.alrt_delete_dialog_pos, (dialog, which) -> {
-            fragmentInterface.deleteNote(p);
+            fragmentInterface.deleteNote(pos);
             adapter.notifyDataSetChanged();
         });
         delete.show();
@@ -136,12 +127,20 @@ public class FragmentList extends Fragment implements NoteInterface {
 
     @Override
     public void onNoteClick(int position) {
-        fragmentInterface.startEditor(position);
+        fragmentInterface.showEditorFragment(position);
     }
 
     @Override
     public void onNoteLongClick(int position, View view) {
-        itemPopup(view, position, adapter);
+        showPopup(view, position, adapter);
     }
 
+
+    public void setClearMenu(boolean clearMenu) {
+        this.clearMenu = clearMenu;
+    }
+
+    public void setOnItemInterface(StartActivity startActivity){
+        fragmentInterface = startActivity;
+    }
 }

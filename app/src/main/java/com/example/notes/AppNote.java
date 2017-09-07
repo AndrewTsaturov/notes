@@ -1,43 +1,59 @@
 package com.example.notes;
 
 import android.app.Application;
-import android.content.SharedPreferences;
-import android.util.Log;
+import android.content.Context;
+
+import com.example.notes.data.Note;
+import com.example.notes.data.NotesDbHandler;
+import com.example.notes.utils.LogUtils;
 
 import java.util.ArrayList;
 
-/**
- * Created by Андрей on 15.04.2017.
- */
-
 public class AppNote extends Application {
 
+    /** Handler это классы менеджеры, здесь у тебя не NoteHandler а скорей всего NoteDbHandler
+     * иначе думаешь что это менеджер над моделью Note
+     */
+    private NotesDbHandler notesDbHandler;
+    public static volatile Context appContext;
+    //TODO--> static здесь плохо, но для примера пойдет
     public static ArrayList<Note> listNotes = new ArrayList<>();
-    private NotesHandler notesHandler;
+
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("AppNOTE", "AppNote Стартовал");
-        if (notesHandler == null) notesHandler = new NotesHandler(this);
-        listNotes = notesHandler.loadNotes();
+
+        LogUtils.E("AppNote onCreate");
+
+        appContext = getApplicationContext();
+        if (notesDbHandler == null) notesDbHandler = new NotesDbHandler(this);
+        listNotes = notesDbHandler.loadNotes();
     }
 
-    public void saveData(int p, Note note){
-        if (p != Integer.MIN_VALUE && listNotes.size() > 0){
-            listNotes.set(p, note);
-            Note newNote = new Note(AppNote.listNotes.get(p).getId(), note.header, note.body);
-            notesHandler.saveNote(newNote);}
-        else {listNotes.add(note);
-            notesHandler.addNote(note);
+    //TODO--> группируй код в блоки, расставляй брейсы(скобки) правильно
+    //TODO--> int p; именуй переменные правильно, переменная должна говорить сама за себя
+    public void saveData(int position, Note note){
+
+        if (position != Integer.MIN_VALUE && listNotes.size() > 0) {
+            listNotes.set(position, note);
+            //используй geter и setter это старые уроки
+            Note newNote = new Note(AppNote.listNotes.get(position).getId(), note.getHeader(), note.getBody());
+            notesDbHandler.saveNote(newNote);
         }
 
-        notesHandler.showItemsforLogs();
+        else {
+            listNotes.add(note);
+            notesDbHandler.addNote(note);
+        }
+
+        notesDbHandler.showItemsForLogs();
     }
 
-    public void deleteNote(int p){
-        notesHandler.deleteNote(listNotes.get(p));
-        listNotes.remove(p);
-        notesHandler.showItemsforLogs();
+    //TODO--> int p; именуй переменные правильно, переменная должна говорить сама за себя
+    public void deleteNote(int position){
+        notesDbHandler.deleteNote(listNotes.get(position));
+        listNotes.remove(position);
+        notesDbHandler.showItemsForLogs();
     }
 }

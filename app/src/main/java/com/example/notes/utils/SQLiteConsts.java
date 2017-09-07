@@ -1,4 +1,4 @@
-package com.example.notes;
+package com.example.notes.utils;
 
 /**
  * Created by Андрей on 24.05.2017.
@@ -17,6 +17,4 @@ public interface SQLiteConsts {
     String PATH_TO_ID = "notes/id";
     String PATH_TO_HEADER = "notes/header";
     String PATH_TO_BODY = "notes/body";
-
-
 }

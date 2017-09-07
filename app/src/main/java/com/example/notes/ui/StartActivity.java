@@ -1,94 +1,94 @@
-package com.example.notes;
+package com.example.notes.ui;
 
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.PopupMenu;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ListView;
-import java.util.ArrayList;
+
+import com.example.notes.AppNote;
+import com.example.notes.R;
+import com.example.notes.data.Note;
+import com.example.notes.ui.inerfaces.FragmentInterface;
+import com.example.notes.utils.LogUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
+//TODO--> вверху была куча неиспользуемых импортов - это плохо, порой очень
 public class StartActivity extends AppCompatActivity implements FragmentInterface {
 
-    FrameLayout editorUI;
+    //TODO--> используй private для локальных переменных класса или ButterKnife
 
-    FragmentList list;
+    @Nullable @BindView(R.id.land_editor) FrameLayout editorUI;
 
-    FragmentEditor editor;
+    private AppNote ap;
+    private NoteListFragment list;
+    private EditorNoteFragment editor;
+    private FragmentTransaction ft;
 
-    FragmentManager manager;
-
-    FragmentTransaction ft;
-
-    boolean mDualPane, editorIsWorking;
-
-    AppNote ap;
+    boolean mDualPane, isEditorWorking;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //--> В верстке всё очень плохо, без комментариев */
         setContentView(R.layout.activity_main);
 
-        //TODO ==> Here: ButterKnife doesn't work and calls the app crush
-        editorUI = (FrameLayout) findViewById(R.id.land_editor);
 
         ap = ((AppNote) getApplicationContext());
 
+        //--> Это хороший тон чтоб не заливать onCreate
         initUI();
     }
 
+    //--> а это уже очень плохо init это инициализация и всё, остальное это сеттинг или что-то другое
     private void initUI(){
+        ButterKnife.bind(this);
 
-        list = new FragmentList();
-        list.setClearMenu(true);
 
-        editor = new FragmentEditor();
+        //--->
+        attachNoteListFragment();
+        setFragmentEditor();
+        //<---
 
-        manager = getSupportFragmentManager();
+        LogUtils.E("UI initialized");
 
-        ft = manager.beginTransaction();
-        ft.add(R.id.ui, list);
-        ft.commit();
+        attachDualPlane();
+    }
 
+    private void attachDualPlane() {
 
         mDualPane = editorUI != null && editorUI.getVisibility() == View.VISIBLE;
 
         if(mDualPane){
-            ft = manager.beginTransaction();
+            ft = getSupportFragmentManager().beginTransaction();
             ft.add(R.id.land_editor, editor);
             ft.commit();
-            Log.d("Проверка", "сработало");
         }
     }
 
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
+    private void setFragmentEditor() {
+        editor = new EditorNoteFragment();
     }
 
-    //костыль с финишом
+    private void attachNoteListFragment() {
+
+        list = new NoteListFragment();
+        list.setClearMenu(true);
+
+        ft = getSupportFragmentManager().beginTransaction();
+        ft.add(R.id.ui, list);
+        ft.commit();
+    }
+
     @Override
     public void onBackPressed() {
-        if(!mDualPane && editorIsWorking){
+        if(!mDualPane && isEditorWorking){
             list.setClearMenu(true);
-            stopEditor();
+            hideEditorFragment();
         }
         else this.finish();
     }
@@ -99,8 +99,8 @@ public class StartActivity extends AppCompatActivity implements FragmentInterfac
     }
 
     @Override
-    public void startEditor(int position) {
-        editorIsWorking = true;
+    public void showEditorFragment(int position) {
+        isEditorWorking = true;
 
         editor.setCheckNote(position);
 
@@ -108,28 +108,28 @@ public class StartActivity extends AppCompatActivity implements FragmentInterfac
             landscapeEditorLaunch(position);
         }
         else {
-            editor = new FragmentEditor();
+            editor = new EditorNoteFragment();
             editor.setClearMenu(true);
             editor.setCheckNote(position);
 
-            ft = manager.beginTransaction();
+            ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.ui, editor);
             ft.commit();
         }
     }
 
     @Override
-    public void stopEditor() {
+    public void hideEditorFragment() {
 
-        editorIsWorking = false;
+        isEditorWorking = false;
 
         if(mDualPane){
             list.adapter.notifyDataSetChanged();
         }
         else {
-            list = new FragmentList();
+            list = new NoteListFragment();
 
-            ft = manager.beginTransaction();
+            ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.ui, list);
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             ft.commit();
@@ -143,7 +143,7 @@ public class StartActivity extends AppCompatActivity implements FragmentInterfac
             editor.setCheckNote(AppNote.listNotes.size() - 1);
             list.adapter.notifyDataSetChanged();
         }
-        else stopEditor();
+        else hideEditorFragment();
     }
 
     @Override

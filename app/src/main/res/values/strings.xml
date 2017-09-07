@@ -26,4 +26,7 @@
     <string name="hint_edit_header">Заголовок</string>
     <string name="hint_edit_body">Ваши мысли</string>
     <string name="start">Ваши заметки:</string>
+
+    <string name="rating">ReviewRating</string>
+    <string name="txt_rating">Score 2 to 10, there is a notion of progress and regress. You have the second one. I always say that you have to understand what you\'re doing, you can see by code that you write many things on the shoe, if only it works, it will not work. We need to do the work on the errors, I\'ll prepare a test task for you, you need to try again.</string>
 </resources>

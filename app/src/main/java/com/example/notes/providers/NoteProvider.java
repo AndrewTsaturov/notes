@@ -1,4 +1,4 @@
-package com.example.notes;
+package com.example.notes.providers;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -9,13 +9,16 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.example.notes.data.NotesDbHandler;
+import com.example.notes.utils.SQLiteConsts;
+
 /**
  * Created by Андрей on 30.05.2017.
  */
 
 public class NoteProvider extends ContentProvider {
 
-    private NotesHandler handler;
+    private NotesDbHandler handler;
 
     private SQLiteDatabase db;
 
@@ -64,7 +67,7 @@ public class NoteProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        handler = new NotesHandler(getContext());
+        handler = new NotesDbHandler(getContext());
         return true;
     }
 
@@ -76,7 +79,7 @@ public class NoteProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        NotesHandler handler = new NotesHandler(getContext());
+        NotesDbHandler handler = new NotesDbHandler(getContext());
         return null;
     }
 }

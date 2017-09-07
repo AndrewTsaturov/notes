@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:name=".AppNote"
         android:theme="@style/AppTheme">
-        <activity android:name=".StartActivity">
+        <activity android:name=".ui.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,6 +19,6 @@
         </activity>
         <provider
             android:authorities="com.example.notes.provider"
-            android:name=".NoteProvider"/>
+            android:name=".providers.NoteProvider"/>
     </application>
 </manifest>
